@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<int> usersList = [99, 99];
   bool gameIsOn = false;
+  bool isPlayer1Turn = true;
 
   @override
   void initState() {
@@ -133,34 +134,71 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget rollDice(UserProvider users) {
     return Center(
-      child: TextButton(
-        onPressed: () async {
-          await Provider.of<DiceProvider>(context, listen: false)
-              .generateDiceValue();
-          final dice1 =
-              Provider.of<DiceProvider>(context, listen: false).dice1ValueCount;
-          final dice2 =
-              Provider.of<DiceProvider>(context, listen: false).dice2ValueCount;
+      child: isPlayer1Turn
+          ? TextButton(
+              onPressed: () async {
+                await Provider.of<DiceProvider>(context, listen: false)
+                    .generateDiceValue();
+                final dice1 = Provider.of<DiceProvider>(context, listen: false)
+                    .dice1ValueCount;
+                final dice2 = Provider.of<DiceProvider>(context, listen: false)
+                    .dice2ValueCount;
 
-          final addUser1 = dice1 + dice2;
+                final addUser1 = dice1 + dice2;
 
-          users.updatePositions(addUser1: addUser1, addUser2: 0);
-          if (users.user1PositionIndex == 0) {
-            _showMyDialog(users);
-          }
-        },
-        child: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.25,
-          color: Colors.red,
-          child: Column(
-            children: [
-              DiceRoll(),
-              Text('Jogar dados para Jogador Vermelho (1)'),
-            ],
-          ),
-        ),
-      ),
+                users.updatePositions(addUser1: addUser1, addUser2: 0);
+                if (users.user1PositionIndex == 0) {
+                  _showMyDialog(users);
+                }
+
+                setState(() {
+                  isPlayer1Turn = false;
+                });
+              },
+              child: Container(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.25,
+                color: Colors.red,
+                child: Column(
+                  children: [
+                    DiceRoll(),
+                    Text('Jogar dados para Jogador Vermelho (1)'),
+                  ],
+                ),
+              ),
+            )
+          : TextButton(
+              onPressed: () async {
+                await Provider.of<DiceProvider>(context, listen: false)
+                    .generateDiceValue();
+                final dice1 = Provider.of<DiceProvider>(context, listen: false)
+                    .dice1ValueCount;
+                final dice2 = Provider.of<DiceProvider>(context, listen: false)
+                    .dice2ValueCount;
+
+                final addUser2 = dice1 + dice2;
+
+                users.updatePositions(addUser1: 0, addUser2: addUser2);
+                if (users.user2PositionIndex == 0) {
+                  _showMyDialog(users);
+                }
+
+                setState(() {
+                  isPlayer1Turn = true;
+                });
+              },
+              child: Container(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.25,
+                color: Colors.green,
+                child: Column(
+                  children: [
+                    DiceRoll(),
+                    Text('Jogar dados para Jogador Verde (2)'),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 

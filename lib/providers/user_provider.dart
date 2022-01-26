@@ -27,7 +27,7 @@ class UserProvider with ChangeNotifier {
   }
 
   int get user1PositionIndex => _user1Position;
-  int get user2PositionINdex => _user2Position;
+  int get user2PositionIndex => _user2Position;
 
   Offset get user1Position => _user1OffsetPosition;
   Offset get user2Position => _user2OffsetPosition;
@@ -40,9 +40,9 @@ class UserProvider with ChangeNotifier {
 
   void updatePositions({required int addUser1, required int addUser2}) {
     //_user1Position += addUser1;
-    _user2Position += addUser2;
+    //_user2Position += addUser2;
 
-    print('Position Before: $_user1Position');
+    debugPrint('Position Before of user 1: $_user1Position');
     for (var i = 1; i <= addUser1; i++) {
       if (isRowToDecrease(_user1Position)) {
         if (isEndOfRow(endRowList2, _user1Position)) {
@@ -64,17 +64,49 @@ class UserProvider with ChangeNotifier {
     if (_user1Position < 0) {
       _user1Position = _user1Position.abs();
     }
-    print('Position After: $_user1Position');
 
     for (var pair in laddersPoints) {
       if (pair.last == _user1Position) {
         _user1Position = pair.first;
       }
+    }
 
+    debugPrint('Position After of user 1: $_user1Position');
+
+    // User 2
+
+    debugPrint('Position Before of user 2: $_user2Position');
+    for (var i = 1; i <= addUser2; i++) {
+      if (isRowToDecrease(_user2Position)) {
+        if (isEndOfRow(endRowList2, _user2Position)) {
+          _user2Position -= 11;
+          _user2Position += 1;
+        } else {
+          _user2Position -= 1;
+        }
+      } else {
+        if (isEndOfRow(endRowList1, _user2Position)) {
+          _user2Position -= 9;
+          _user2Position -= 1;
+        } else {
+          _user2Position += 1;
+        }
+      }
+    }
+
+    if (_user2Position < 0) {
+      _user2Position = _user2Position.abs();
+    }
+
+    for (var pair in laddersPoints) {
       if (pair.last == _user2Position) {
         _user2Position = pair.first;
       }
     }
+
+    debugPrint('Position After of user 2: $_user2Position');
+
+    // =========
 
     final RenderBox renderUser1 = keysList[_user1Position]
         .currentContext
