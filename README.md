@@ -1,16 +1,15 @@
-# snakes_and_ladders
+# Solução do Teste Técnico 02 da Escribo
 
-A new Flutter project.
 
-## Getting Started
+## Objetivo da aplicação
 
-This project is a starting point for a Flutter application.
+Criar um jogo de cobras e escadas.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Como usar
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Basta compilar a aplicação apra Android. Ao pressionar o botão de play na tela, o tabuleiro será preenchido, com escadas representas por linhas marrons e cobras representadas por linhas roxas.
+
+Para jogar basta apeas pressionar o botão de seu jogador (1 ou 2) e seguir a ordem indicada.
+
+
