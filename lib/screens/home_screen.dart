@@ -192,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   final addUser1 = dice1 + dice2;
 
-                  users.updatePositions(addUser1: 16, addUser2: 0);
+                  users.updatePositions(addUser1: addUser1, addUser2: 0);
                   if (users.user1PositionIndex == 0) {
                     showMyDialog(context, users, finish, user1Color);
                   }
@@ -220,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   final addUser2 = dice1 + dice2;
 
-                  users.updatePositions(addUser1: 0, addUser2: 9);
+                  users.updatePositions(addUser1: 0, addUser2: addUser2);
                   if (users.user2PositionIndex == 0) {
                     showMyDialog(context, users, finish, user2Color);
                   }
