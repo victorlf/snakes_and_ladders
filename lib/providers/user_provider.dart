@@ -65,31 +65,31 @@ class UserProvider with ChangeNotifier {
 
     if (addUser1 > 0) {
       debugPrint('Position Before of user 1: $_user1Position');
-      final userPointBefore = _user1Position;
-      if (userPointBefore < 0) {
-        _user1Position = usersInitialPoint;
-      }
 
-      for (var i = 1; i <= addUser1; i++) {
-        if (isRowToDecrease(_user1Position)) {
-          if (isEndOfRow(endRowList2, _user1Position)) {
-            _user1Position -= 11;
-            _user1Position += 1;
-          } else {
-            _user1Position -= 1;
-          }
+      if (_user1Position < 0) {
+        if (addUser1 > 1 && addUser1 < 11) {
+          _user1Position = usersInitialPoint - 1 + addUser1;
         } else {
-          if (isEndOfRow(endRowList1, _user1Position)) {
-            _user1Position -= 9;
-            _user1Position -= 1;
+          _user1Position = usersInitialPoint - (addUser1 - 10);
+        }
+      } else {
+        for (var i = 1; i <= addUser1; i++) {
+          if (isRowToDecrease(_user1Position)) {
+            if (isEndOfRow(endRowList2, _user1Position)) {
+              _user1Position -= 11;
+              _user1Position += 1;
+            } else {
+              _user1Position -= 1;
+            }
           } else {
-            _user1Position += 1;
+            if (isEndOfRow(endRowList1, _user1Position)) {
+              _user1Position -= 9;
+              _user1Position -= 1;
+            } else {
+              _user1Position += 1;
+            }
           }
         }
-      }
-
-      if (userPointBefore < 0) {
-        _user1Position += 1;
       }
 
       if (_user1Position < 0) {
@@ -116,30 +116,30 @@ class UserProvider with ChangeNotifier {
     // User 2
     if (addUser2 > 0) {
       debugPrint('Position Before of user 2: $_user2Position');
-      final userPointBefore = _user2Position;
-      if (userPointBefore < 0) {
-        _user2Position = usersInitialPoint;
-      }
-      for (var i = 1; i <= addUser2; i++) {
-        if (isRowToDecrease(_user2Position)) {
-          if (isEndOfRow(endRowList2, _user2Position)) {
-            _user2Position -= 11;
-            _user2Position += 1;
-          } else {
-            _user2Position -= 1;
-          }
+      if (_user2Position < 0) {
+        if (addUser2 > 1 && addUser2 < 11) {
+          _user2Position = usersInitialPoint - 1 + addUser2;
         } else {
-          if (isEndOfRow(endRowList1, _user2Position)) {
-            _user2Position -= 9;
-            _user2Position -= 1;
+          _user2Position = usersInitialPoint - (addUser2 - 10);
+        }
+      } else {
+        for (var i = 1; i <= addUser2; i++) {
+          if (isRowToDecrease(_user2Position)) {
+            if (isEndOfRow(endRowList2, _user2Position)) {
+              _user2Position -= 11;
+              _user2Position += 1;
+            } else {
+              _user2Position -= 1;
+            }
           } else {
-            _user2Position += 1;
+            if (isEndOfRow(endRowList1, _user2Position)) {
+              _user2Position -= 9;
+              _user2Position -= 1;
+            } else {
+              _user2Position += 1;
+            }
           }
         }
-      }
-
-      if (userPointBefore < 0) {
-        _user2Position += 1;
       }
 
       if (_user2Position < 0) {
