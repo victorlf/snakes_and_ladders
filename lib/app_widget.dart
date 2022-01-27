@@ -13,6 +13,7 @@ class AppWidget extends StatelessWidget {
       title: 'Snake and Ladders',
       theme: ThemeData(
         primarySwatch: Colors.purple,
+        scaffoldBackgroundColor: Colors.grey.shade400,
       ),
       home: const HomeScreen(title: 'Cobras e Escadas'),
     );

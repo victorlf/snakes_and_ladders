@@ -4,9 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:snakes_and_ladders/providers/dice_provider.dart';
 import 'package:snakes_and_ladders/providers/user_provider.dart';
 import 'package:snakes_and_ladders/utils/constants.dart';
+import 'package:snakes_and_ladders/widgets/congratulations_dialog.dart';
 import 'package:snakes_and_ladders/widgets/dice_roll.dart';
+import 'package:snakes_and_ladders/widgets/play_button.dart';
 import 'package:snakes_and_ladders/widgets/shape_painter.dart';
-
 import 'package:snakes_and_ladders/widgets/square.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //late final List<GlobalKey> keysList;
   late final GlobalKey keyContainer;
   List<Map<Offset, Offset>> ladderList = [];
+  List<Map<Offset, Offset>> snakeList = [];
   List<Offset> usersOffsetList = [];
   // base da escada é o value do Map
 
@@ -49,6 +51,28 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> showMyDialog(
+      context, UserProvider users, Function finish, Color userColor) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return CongratulationsDialog(
+          finish: finish,
+          userColor: userColor,
+        );
+      },
+    );
+  }
+
+  void finish() {
+    setState(() {
+      ladderList = [];
+      snakeList = [];
+      gameIsOn = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     void startGame() {
@@ -65,9 +89,23 @@ class _HomeScreenState extends State<HomeScreen> {
           Offset offsetEnd = renderEnd.localToGlobal(Offset.zero);
           ladderList.add({offsetStart: offsetEnd});
         }
+
+        for (var points in snakesPoints) {
+          final RenderBox renderStart = keysList[points.first]
+              .currentContext
+              ?.findRenderObject() as RenderBox;
+          Offset offsetStart = renderStart.localToGlobal(Offset.zero);
+
+          final RenderBox renderEnd = keysList[points.last]
+              .currentContext
+              ?.findRenderObject() as RenderBox;
+          Offset offsetEnd = renderEnd.localToGlobal(Offset.zero);
+          snakeList.add({offsetStart: offsetEnd});
+        }
+
         gameIsOn = true;
       });
-      Provider.of<UserProvider>(context, listen: false).setInitialPositions();
+      //Provider.of<UserProvider>(context, listen: false).setInitialPositions();
     }
 
     return SafeArea(
@@ -82,7 +120,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: CustomPaint(
                   foregroundPainter: ShapePainter(
-                    pairList: ladderList,
+                    ladderList: ladderList,
+                    snakeList: snakeList,
                     //userList: usersOffsetList,
                     userList: users.getUsersPosition,
                   ),
@@ -133,104 +172,71 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget rollDice(UserProvider users) {
-    return Center(
-      child: isPlayer1Turn
-          ? TextButton(
-              onPressed: () async {
-                await Provider.of<DiceProvider>(context, listen: false)
-                    .generateDiceValue();
-                final dice1 = Provider.of<DiceProvider>(context, listen: false)
-                    .dice1ValueCount;
-                final dice2 = Provider.of<DiceProvider>(context, listen: false)
-                    .dice2ValueCount;
-
-                final addUser1 = dice1 + dice2;
-
-                users.updatePositions(addUser1: addUser1, addUser2: 0);
-                if (users.user1PositionIndex == 0) {
-                  _showMyDialog(users);
-                }
-
-                setState(() {
-                  isPlayer1Turn = false;
-                });
-              },
-              child: Container(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.25,
-                color: Colors.red,
-                child: Column(
-                  children: [
-                    DiceRoll(),
-                    Text('Jogar dados para Jogador Vermelho (1)'),
-                  ],
-                ),
-              ),
-            )
-          : TextButton(
-              onPressed: () async {
-                await Provider.of<DiceProvider>(context, listen: false)
-                    .generateDiceValue();
-                final dice1 = Provider.of<DiceProvider>(context, listen: false)
-                    .dice1ValueCount;
-                final dice2 = Provider.of<DiceProvider>(context, listen: false)
-                    .dice2ValueCount;
-
-                final addUser2 = dice1 + dice2;
-
-                users.updatePositions(addUser1: 0, addUser2: addUser2);
-                if (users.user2PositionIndex == 0) {
-                  _showMyDialog(users);
-                }
-
-                setState(() {
-                  isPlayer1Turn = true;
-                });
-              },
-              child: Container(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.25,
-                color: Colors.green,
-                child: Column(
-                  children: [
-                    DiceRoll(),
-                    Text('Jogar dados para Jogador Verde (2)'),
-                  ],
-                ),
-              ),
-            ),
-    );
-  }
-
-  Future<void> _showMyDialog(UserProvider users) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('AlertDialog Title'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('This is a demo alert dialog.'),
-                Text('Would you like to approve of this message?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
+    return Column(
+      children: [
+        DiceRoll(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             TextButton(
-              child: const Text('Approve'),
-              onPressed: () {
-                setState(() {
-                  ladderList = [];
-                  gameIsOn = false;
-                });
-                Navigator.of(context).pop();
+              onPressed: () async {
+                if (isPlayer1Turn) {
+                  await Provider.of<DiceProvider>(context, listen: false)
+                      .generateDiceValue();
+                  final dice1 =
+                      Provider.of<DiceProvider>(context, listen: false)
+                          .dice1ValueCount;
+                  final dice2 =
+                      Provider.of<DiceProvider>(context, listen: false)
+                          .dice2ValueCount;
+
+                  final addUser1 = dice1 + dice2;
+
+                  users.updatePositions(addUser1: 16, addUser2: 0);
+                  if (users.user1PositionIndex == 0) {
+                    showMyDialog(context, users, finish, user1Color);
+                  }
+
+                  setState(() {
+                    if (dice1 != dice2) {
+                      isPlayer1Turn = false;
+                    }
+                  });
+                }
               },
+              child: const PlayButton(text: 'Jogador 1', color: user1Color),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (!isPlayer1Turn) {
+                  await Provider.of<DiceProvider>(context, listen: false)
+                      .generateDiceValue();
+                  final dice1 =
+                      Provider.of<DiceProvider>(context, listen: false)
+                          .dice1ValueCount;
+                  final dice2 =
+                      Provider.of<DiceProvider>(context, listen: false)
+                          .dice2ValueCount;
+
+                  final addUser2 = dice1 + dice2;
+
+                  users.updatePositions(addUser1: 0, addUser2: 9);
+                  if (users.user2PositionIndex == 0) {
+                    showMyDialog(context, users, finish, user2Color);
+                  }
+
+                  setState(() {
+                    if (dice1 != dice2) {
+                      isPlayer1Turn = true;
+                    }
+                  });
+                }
+              },
+              child: const PlayButton(text: 'Jogador 2', color: user2Color),
             ),
           ],
-        );
-      },
+        ),
+      ],
     );
   }
 }

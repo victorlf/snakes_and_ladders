@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 class ShapePainter extends CustomPainter {
   // final Offset offsetStart;
   // late final Offset offsetEnd;
-  final List<Map<Offset, Offset>> pairList;
+  final List<Map<Offset, Offset>> ladderList;
+  final List<Map<Offset, Offset>> snakeList;
   final List<Offset> userList;
   ShapePainter({
     // required this.offsetStart,
     // required this.offsetEnd,
-    required this.pairList,
+    required this.ladderList,
     required this.userList,
+    required this.snakeList,
   });
 
   @override
@@ -18,6 +20,11 @@ class ShapePainter extends CustomPainter {
       ..color = Colors.brown
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.square;
+
+    var snakePaint = Paint()
+      ..color = Colors.purple
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round;
 
     var user1Paint = Paint()
       ..color = Colors.red
@@ -29,13 +36,22 @@ class ShapePainter extends CustomPainter {
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.square;
 
-    for (var offsetPair in pairList) {
+    for (var offsetPair in ladderList) {
       Offset startingPoint = Offset(offsetPair.keys.first.dx,
           offsetPair.keys.first.dy - (size.height * 0.2));
       Offset endingPoint = Offset(offsetPair.values.first.dx,
           offsetPair.values.first.dy - (size.height * 0.2));
 
       canvas.drawLine(startingPoint, endingPoint, ladderPaint);
+    }
+
+    for (var offsetPair in snakeList) {
+      Offset startingPoint = Offset(offsetPair.keys.first.dx,
+          offsetPair.keys.first.dy - (size.height * 0.2));
+      Offset endingPoint = Offset(offsetPair.values.first.dx,
+          offsetPair.values.first.dy - (size.height * 0.2));
+
+      canvas.drawLine(startingPoint, endingPoint, snakePaint);
     }
 
     for (var i = 0; i < userList.length; i++) {
